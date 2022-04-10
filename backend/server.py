@@ -26,18 +26,20 @@ class httpResponse:
 
         self.responseLine = f"{protocol} {status} {httpCodes[status]}"
 
-        self.text = self.responseLine + "\n"
-
-        for header in self.headers.keys():
-            self.text += f"{header}: {self.headers[header]}\n"
-        
-        self.text += data
-
-req = requests.get("https://www.randomlists.com/data/words.json")
-
-words = json.loads(req.text)["data"]
+        self.data = data
+    
+    def setHeader(self, key, value):
+        self.headers[key] = value
+    
+    def build(self):
+        text = self.responseLine + "\n"
+        for key in self.headers.keys():
+            text += f"{key}: {self.headers[key]}\n"
+        text += "\n" + self.data
+        return text
  
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR, 1)
 server.bind(('', 3000))
 
 print("listening")
@@ -57,12 +59,17 @@ while True:
         urlParams = request.resource.split("/")
         
         if(urlParams[0] == "words"):
+
+            words = open("words.txt", "r").readlines()
             index = int(urlParams[1])
             if(index >= len(words)):
-                c.send("NULL".encode())
+                response = httpResponse("text/html", 404)
+                response.setHeader("Access-Control-Allow-Origin","*")
+                c.send(response.build().encode())
             else:
                 response = httpResponse("text/html", 200, words[index])
-                c.send(response.text.encode())
+                response.setHeader("Access-Control-Allow-Origin","*")
+                c.send(response.build().encode())
     c.close()
  
 
