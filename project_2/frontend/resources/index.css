@@ -10,9 +10,20 @@
         flex-wrap: wrap;
     }
 
-    #header #actions{
+    #actions{
         order:1;
         width: 100%;
+    }
+}
+
+@media(min-width: 480px){
+    #icons{
+        display: flex;
+        flex-direction: row-reverse;
+        flex-wrap: nowrap;
+        align-items: flex-start;
+        justify-content: right;
+        width: 200px;
     }
 }
 
@@ -37,14 +48,6 @@
 }
 
 #title{
-    width: 200px;
-}
-
-#icons{
-    display: flex;
-    flex-direction: row-reverse;
-    align-items: flex-start;
-    justify-content: right;
     width: 200px;
 }
 

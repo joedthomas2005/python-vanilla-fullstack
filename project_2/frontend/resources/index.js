@@ -13,9 +13,12 @@ function load(){
         console.log(`search query ${query}`);
         queryBackend(query, 10);
     })
+
+    queryBackend("", 10);
 }
 
 function queryBackend(search, count){
+    document.getElementById("content").innerHTML = "";
     let request = new XMLHttpRequest();
     let url = `http://127.0.0.1:3000/search?query=${search}&count=${count}`;
     request.open("GET", url);

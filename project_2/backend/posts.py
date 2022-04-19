@@ -1,11 +1,11 @@
-import mysql.connector
+#import mysql.connector
 import sqlite3
-
-credFile = open("sqlcreds.creds", "r")
-fileData = credFile.readlines()
-credFile.close()
-user = fileData[0].strip("\n")
-password = fileData[1].strip("\n")
+import urllib.parse
+# credFile = open("sqlcreds.creds", "r")
+# fileData = credFile.readlines()
+# credFile.close()
+# user = fileData[0].strip("\n")
+# password = fileData[1].strip("\n")
 
 # db = mysql.connector.connect(
 #     host = "localhost",
@@ -20,9 +20,21 @@ db = sqlite3.connect('blogapp.db')
 cursor = db.cursor()
 
 def search(query, limit):
-    query = f"""SELECT id, title, path FROM posts WHERE title LIKE \"%{query}%\" 
-    OR id=\"{query}\" ORDER BY id DESC LIMIT {limit}"""
-    cursor.execute(query)
+    
+    queryTerms = urllib.parse.unquote(query).split(" ")
+    SQLquery = "SELECT id, title, path FROM posts WHERE title LIKE "
+
+    for i in range(len(queryTerms)):
+
+        if i == len(queryTerms) - 1:
+            SQLquery += f"\"%{queryTerms[i]}%\" "
+        else:
+            SQLquery += f"\"%{queryTerms[i]}%\" OR title LIKE "
+
+    SQLquery += f"OR id=\"{query}\" ORDER BY id DESC LIMIT {limit}"
+
+    print("SQL query: " + SQLquery)
+    cursor.execute(SQLquery)
 
     results = [result for result in cursor]
     return results

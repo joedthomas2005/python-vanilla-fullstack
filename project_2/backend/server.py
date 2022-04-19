@@ -1,6 +1,7 @@
 import socket
 import json
-import httpClasses
+import actions
+import httpFormatter
 import requestHandler
 import posts
 
@@ -12,79 +13,19 @@ print("listening")
 server.listen(100)
 
 handler = requestHandler.requestHandler()
+handler.addHandler("GET search", actions.search)
+handler.addHandler("GET posts", actions.readPost)
 
 while True:
 
     c, addr = server.accept()
     data = c.recv(1024).decode()
-    print("new request")
-    request = httpClasses.httpRequest(data)
+
+    request = httpFormatter.httpRequest(data)
     print(f"{request.method} REQUEST FOR {request.resource} WITH PARAMS {request.params}")
 
-    handler.handle(f"{request.method} {request.resource}", request.params)
-    if request.method == "GET":
-        if request.resource == "search":
-
-            try:
-                queryTerm = request.params["query"]
-                count = int(request.params["count"])
-
-                databaseEntries = posts.search(queryTerm, count)
-                
-                items = []
-                for i in range(len(databaseEntries)):
-                    items.append({
-                        "number": i,
-                        "query": queryTerm,
-                        "title": databaseEntries[i][1],
-                        "body": posts.readPost(databaseEntries[i][2])
-                    })
-                
-                response = httpClasses.httpResponse(200, "text/html", json.dumps(items))
-                response.setHeader("Access-Control-Allow-Origin","*")
-                print("response: " + response.data)
-
-            except Exception as e:
-                print(e)
-                response = httpClasses.httpResponse(400)
-                response.setHeader("Access-Control-Allow-Origin", "*")
-        
-        elif request.resource == "posts":
-            try:
-                postId = int(request.params["id"])
-                responseData = posts.readPostById(postId)
-
-                if(responseData):
-                    response = httpClasses.httpResponse(200, "text/html", json.dumps(responseData))
-                    response.setHeader("Access-Control-Allow-Origin", "*")
-                else:
-                    response = httpClasses.httpResponse(404)
-                    print(404)
-
-            except ValueError as v:
-                response = httpClasses.httpResponse(400)
-                response.setHeader("Access-Control-Allow-Origin", "*")
-                print(400)
-            
-            except KeyError as k:
-                response = httpClasses.httpResponse(400)
-                response.setHeader("Access-Control-Allow-Origin", "*")
-                print(400)
-                 
-        else:
-            response = httpClasses.httpResponse(404)
-            print(404)        
-
-        c.send(response.build().encode())
+    response = handler.handle(f"{request.method} {request.resource}", request.params)
     
-    elif request.method == "POST":
-        print("Post Request")
-        response = httpClasses.httpResponse(405)
-        print(405)
-        c.send(response.build().encode())
-
-    else:
-        response = httpClasses.httpResponse(400)
-        response.setHeader("Access-Control-Allow-Origin", "*")
-        print(400)
-        c.send(response.build().encode())
+    c.send(response.build().encode())
+    c.close()
+    
