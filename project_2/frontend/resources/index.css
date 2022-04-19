@@ -10,15 +10,45 @@
         flex-wrap: wrap;
     }
 
-    #header #actions{
+    #actions{
         order:1;
         width: 100%;
     }
-
 }
+
+@media(min-width: 480px){
+    #icons{
+        display: flex;
+        flex-direction: row-reverse;
+        flex-wrap: nowrap;
+        align-items: flex-start;
+        justify-content: right;
+        width: 200px;
+    }
+}
+
+#content{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.card{
+    margin: 10px;
+    width: 50%;
+    text-align: center;
+    border: 1px solid black;
+    box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
+}
+
 
 #header *{
     margin-top: 0px;
+}
+
+#title{
+    width: 200px;
 }
 
 #actions *{
