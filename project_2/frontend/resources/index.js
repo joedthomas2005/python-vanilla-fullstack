@@ -1,4 +1,5 @@
 function load(){
+
     document.getElementById("searchBar").addEventListener("keyup", (event) =>{
         if(event.key == "Enter"){
             let query = document.getElementById("searchBar").value;
@@ -28,7 +29,30 @@ function queryBackend(search, count){
             results = JSON.parse(data);
              results.forEach((result) => {
                  console.log(result);
+                 createCard(result);
              })
         }
     }
+}
+
+function createCard(post){
+
+    element = document.createElement("div");
+    element.classList.add("card");
+
+    headerContainer = document.createElement("h2");
+    headerContainer.classList.add("cardHeader");
+
+    bodyContainer = document.createElement("p");
+    bodyContainer.classList.add("cardBody");
+
+    header = document.createTextNode(post.title);
+    body = document.createTextNode(post.body);
+    headerContainer.appendChild(header);
+    bodyContainer.appendChild(body);
+
+    element.appendChild(headerContainer);
+    element.appendChild(bodyContainer);
+    
+    document.getElementById("content").appendChild(element);
 }

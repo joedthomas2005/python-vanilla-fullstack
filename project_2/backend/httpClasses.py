@@ -1,28 +1,40 @@
-httpCodes = {200: "OK", 404: "Not Found", 500: "Internal Server Error"}
+httpCodes = {200: "OK", 400: "Bad Request", 404: "Not Found", 
+405:"Method Not Allowed",500: "Internal Server Error"}
+
 class httpRequest:
 
     def __init__(self, data):
         self.rawData = data
+        try:
+            lines = data.split("\n")
+        
+            print(lines[0])
+            requestLine = lines[0].split(" ")
+            self.method = requestLine[0]
+            self.resource = requestLine[1][1:]
+            self.protocol = requestLine[2]
+            self.paramLine = ""
+            if "?" in self.resource:
+                self.paramLine = self.resource.split("?")[1]
+                self.resource = self.resource.split("?")[0]
+            
+            self.params = {}
+            if(self.paramLine):
+                for param in self.paramLine.split("&"):
+                    print(param)
+                    self.params[param.split("=")[0]] = param.split("=")[1]
 
-        lines = data.split("\n")
-        
-        print(lines[0])
-        requestLine = lines[0].split(" ")
-        self.method = requestLine[0]
-        self.resource = requestLine[1][1:]
-        self.paramLine = ""
-        if "?" in self.resource:
-            self.paramLine = self.resource.split("?")[1]
-            self.resource = self.resource.split("?")[0]
-        
-        self.params = {}
-        for param in self.paramLine.split("&"):
-                self.params[param.split("=")[0]] = param.split("=")[1]
-        self.protocol = requestLine[2]
+        except:
+
+            self.method = "NULL"
+            self.resource = data
+            self.paramLine = "NULL"
+            self.protocol = "NULL"
+            self.params = {}
 
 class httpResponse:
 
-    def __init__(self, type, status, data = "", protocol = "HTTP/1.1"):
+    def __init__(self, status, type = "text/html", data = "", protocol = "HTTP/1.1"):
         
         self.headers = {}
         self.headers["Content-type"] = type
