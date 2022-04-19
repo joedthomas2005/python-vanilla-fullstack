@@ -1,4 +1,5 @@
 import mysql.connector
+import sqlite3
 
 credFile = open("sqlcreds.creds", "r")
 fileData = credFile.readlines()
@@ -6,13 +7,16 @@ credFile.close()
 user = fileData[0].strip("\n")
 password = fileData[1].strip("\n")
 
-db = mysql.connector.connect(
-    host = "localhost",
-    user = user,
-    password = password,
-    database = "blogapp"
-)
+# db = mysql.connector.connect(
+#     host = "localhost",
+#     user = user,
+#     password = password,
+#     database = "blogapp"
+# )
 
+# cursor = db.cursor()
+
+db = sqlite3.connect('blogapp.db')
 cursor = db.cursor()
 
 def search(query, limit):
@@ -38,7 +42,6 @@ def readPost(path):
     return data
 
 def getPostRecord(id):
-
     query = f"SELECT id, title, path FROM posts WHERE id = {id}"
     
     cursor.execute(query)
@@ -48,7 +51,6 @@ def getPostRecord(id):
     
 
 def getRecentPosts(number: int) -> list:
-
     query = f"SELECT * FROM posts ORDER BY id DESC LIMIT {number}"
 
     cursor.execute(query)

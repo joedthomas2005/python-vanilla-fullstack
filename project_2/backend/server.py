@@ -1,6 +1,7 @@
 import socket
 import json
 import httpClasses
+import requestHandler
 import posts
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -8,7 +9,9 @@ server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 server.bind(('', 3000))
 
 print("listening")
-server.listen(10)
+server.listen(100)
+
+handler = requestHandler.requestHandler()
 
 while True:
 
@@ -18,6 +21,7 @@ while True:
     request = httpClasses.httpRequest(data)
     print(f"{request.method} REQUEST FOR {request.resource} WITH PARAMS {request.params}")
 
+    handler.handle(f"{request.method} {request.resource}", request.params)
     if request.method == "GET":
         if request.resource == "search":
 
