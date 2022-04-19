@@ -16,12 +16,12 @@ db = mysql.connector.connect(
 cursor = db.cursor()
 
 def search(query, limit):
-    query = f"""SELECT id, title, path FROM posts WHERE title LIKE %{query}% 
-    OR id={query} ORDER BY id DESC LIMIT {limit}"""
+    query = f"""SELECT id, title, path FROM posts WHERE title LIKE \"%{query}%\" 
+    OR id=\"{query}\" ORDER BY id DESC LIMIT {limit}"""
     cursor.execute(query)
 
     results = [result for result in cursor]
-
+    return results
 
 def readPostById(id):
     

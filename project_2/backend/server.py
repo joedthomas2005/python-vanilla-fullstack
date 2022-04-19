@@ -38,9 +38,12 @@ while True:
                 
                 response = httpClasses.httpResponse(200, "text/html", json.dumps(items))
                 response.setHeader("Access-Control-Allow-Origin","*")
+                print("response: " + response.data)
 
-            except:
+            except Exception as e:
+                print(e)
                 response = httpClasses.httpResponse(400)
+                response.setHeader("Access-Control-Allow-Origin", "*")
         
         elif request.resource == "posts":
             try:
@@ -56,10 +59,12 @@ while True:
 
             except ValueError as v:
                 response = httpClasses.httpResponse(400)
+                response.setHeader("Access-Control-Allow-Origin", "*")
                 print(400)
             
             except KeyError as k:
                 response = httpClasses.httpResponse(400)
+                response.setHeader("Access-Control-Allow-Origin", "*")
                 print(400)
                  
         else:
@@ -76,5 +81,6 @@ while True:
 
     else:
         response = httpClasses.httpResponse(400)
+        response.setHeader("Access-Control-Allow-Origin", "*")
         print(400)
         c.send(response.build().encode())
