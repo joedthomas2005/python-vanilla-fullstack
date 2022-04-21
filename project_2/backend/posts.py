@@ -15,8 +15,9 @@ import urllib.parse
 # )
 
 # cursor = db.cursor()
+sqliteDB = 'blogapp.db'
 
-db = sqlite3.connect('blogapp.db')
+db = sqlite3.connect(sqliteDB)
 cursor = db.cursor()
 
 def search(query, limit):

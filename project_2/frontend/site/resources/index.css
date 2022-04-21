@@ -1,23 +1,23 @@
-#header{
+#header {
     display: flex;
-    flex-direction:row;
+    flex-direction: row;
     flex-wrap: nowrap;
     justify-content: space-between;
 }
 
 @media(max-width: 480px) {
-    #header{
+    #header {
         flex-wrap: wrap;
     }
 
-    #actions{
-        order:1;
+    #actions {
+        order: 1;
         width: 100%;
     }
 }
 
-@media(min-width: 480px){
-    #icons{
+@media(min-width: 480px) {
+    #icons {
         display: flex;
         flex-direction: row-reverse;
         flex-wrap: nowrap;
@@ -27,14 +27,14 @@
     }
 }
 
-#content{
+#content {
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
     align-items: center;
 }
 
-.card{
+.card {
     margin: 10px;
     width: 50%;
     text-align: center;
@@ -43,37 +43,38 @@
 }
 
 
-#header *{
+#header * {
     margin-top: 0px;
 }
 
-#title{
+#title {
     width: 200px;
 }
 
-#actions *{
+#actions * {
     margin-top: 3px;
 }
 
-.roundedSearchBar{
+.roundedSearchBar {
     display: flex;
     flex-wrap: nowrap;
 }
-.roundedSearchBar input[type=text]{
+
+.roundedSearchBar input[type=text] {
     border-radius: 20px 0 0 20px;
     padding: 5px 10px;
-    border:1px solid #ababab;
+    border: 1px solid #ababab;
 }
 
-.roundedSearchBar input[type=button]{
-    cursor:pointer;
+.roundedSearchBar input[type=button] {
+    cursor: pointer;
     border-radius: 0 20px 20px 0;
     border: 1px solid #ababab;
     padding: 4px;
     border: 1px solid #ababab;
 }
 
-#icons img{
+#icons img {
     width: 32px;
     height: 32px;
 }

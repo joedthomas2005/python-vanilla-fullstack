@@ -25,6 +25,7 @@ class requestHandler:
         request = f"{method} {resource}"
         if(request in self.requests.keys()):
             response = self.requests[request](params)
+        elif()
         elif "GET " in request:
             response = self.__error(404)
         elif "POST " in request:

@@ -1,13 +1,11 @@
 import socket
-import json
 import actions
 import httpFormatter
 import requestHandler
-import posts
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-server.bind(('', 3000))
+server.bind(('', 3001))
 
 print("listening")
 server.listen(100)

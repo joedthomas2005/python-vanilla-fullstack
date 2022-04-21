@@ -1,44 +1,46 @@
-function load(){
+let API = "http://127.0.0.1:3001"
 
-    document.getElementById("searchBar").addEventListener("keyup", (event) =>{
-        if(event.key == "Enter"){
+function load() {
+
+    document.getElementById("searchBar").addEventListener("keyup", (event) => {
+        if (event.key == "Enter") {
             let query = document.getElementById("searchBar").value;
             console.log(`search query ${query}`);
-            queryBackend(query, 10);
+            searchAPI(query, 10);
         }
     })
 
-    document.getElementById("searchButton").addEventListener("click", () =>{
+    document.getElementById("searchButton").addEventListener("click", () => {
         let query = document.getElementById("searchBar").value;
         console.log(`search query ${query}`);
-        queryBackend(query, 10);
+        searchAPI(query, 10);
     })
 
-    queryBackend("", 10);
+    searchAPI("", 10);
 }
 
-function queryBackend(search, count){
+function searchAPI(search, count) {
     document.getElementById("content").innerHTML = "";
     let request = new XMLHttpRequest();
-    let url = `http://127.0.0.1:3000/search?query=${search}&count=${count}`;
+    let url = `${API}/search?query=${search}&count=${count}`;
     request.open("GET", url);
     request.send();
 
     let results = [];
-    request.onreadystatechange = function(){
-        if(request.readyState == 4){
+    request.onreadystatechange = function () {
+        if (request.readyState == 4) {
             let data = request.responseText;
             console.log(data);
             results = JSON.parse(data);
-             results.forEach((result) => {
-                 console.log(result);
-                 createCard(result);
-             })
+            results.forEach((result) => {
+                console.log(result);
+                createCard(result);
+            })
         }
     }
 }
 
-function createCard(post){
+function createCard(post) {
 
     element = document.createElement("div");
     element.classList.add("card");
@@ -56,6 +58,6 @@ function createCard(post){
 
     element.appendChild(headerContainer);
     element.appendChild(bodyContainer);
-    
+
     document.getElementById("content").appendChild(element);
 }
