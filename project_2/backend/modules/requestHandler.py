@@ -1,4 +1,5 @@
 import modules.httpFormatter as httpFormatter
+import os.path
 class requestHandler:
     '''
     This class handles given requests by executing specified functions associated with the request string. Request strings are 
@@ -26,18 +27,23 @@ class requestHandler:
         request = f"{method} {resource}"
         if(request in self.requests.keys()):
             response = self.requests[request](params)
+        elif os.path.exists(resource):
+            response = self.default(resource)
         elif "GET " in request:
-            response = self.__error(404)
+            response = self.error(404)
         elif "POST " in request:
-            response = self.__error(405)
+            response = self.error(405)
         else:
-            response = self.__error(400)
+            response = self.error(400)
 
         response.setHeader("Access-Control-Allow-Origin", "*")
         return response
         
-    def __error(self, status):
+    def error(self, status):
         return httpFormatter.httpResponse(status)
 
-
-
+    def default(self, resource):
+        
+        file = open(resource, 'r')
+        data = file.read()
+        return httpFormatter.httpResponse(200, data)
