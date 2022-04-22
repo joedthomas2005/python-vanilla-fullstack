@@ -10,13 +10,13 @@ class requestHandler:
     def __init__(self):
         self.requests = {}
         self.default = self.loadfileunsafe
-        self.siteDir = "."
+        self.siteDir = "./"
 
     def setDefault(self, function):
         self.default = function
 
     def setSiteDir(self, directory):
-        self.siteDir = directory
+        self.siteDir = f"{directory}/"
 
     def addHandler(self, method, resource, handler):
         '''
@@ -33,9 +33,10 @@ class requestHandler:
         Run the handler function associated with the given request string. The strings must match exactly.
         '''
         request = f"{method} {resource}"
+        print("file path is " + self.siteDir + resource)
         if(request in self.requests.keys()):
             response = self.requests[request](params)
-        elif os.path.exists(safeDir + resource):
+        elif os.path.exists(self.siteDir + resource):
             response = self.default(resource)
         elif "GET " in request:
             response = self.error(404)
@@ -55,7 +56,9 @@ class requestHandler:
         if ".." in resource or resource[0] == "/":
             return self.error(403)
 
-        file = open(resource, 'r')
+        path = self.siteDir + resource
+        print("loading " + path)
+        file = open(path, 'r')
         data = file.read()
         return httpFormatter.httpResponse(200, data)
 
@@ -66,6 +69,8 @@ class requestHandler:
         return self.error(403)
 
     def loadfileunsafe(self, resource):
-        file = open(resource, 'r')
+        
+        path = self.siteDir + resource
+        file = open(path, 'r')
         data = file.read()
         return httpFormatter.httpResponse(200, data)

@@ -14,7 +14,7 @@ print("listening")
 server.listen(100)
 
 handler = requestHandler.requestHandler()
-handler.setDefault(handler.loadfilesafe)
+handler.setDefault(handler.notfound)
 handler.addHandler("GET", "search", actions.search)
 handler.addHandler("GET", "posts", actions.readPost)
 
