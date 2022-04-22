@@ -1,4 +1,4 @@
-import httpFormatter
+import modules.httpFormatter as httpFormatter
 class requestHandler:
     '''
     This class handles given requests by executing specified functions associated with the request string. Request strings are 
@@ -12,8 +12,9 @@ class requestHandler:
     def addHandler(self, method, resource, handler):
         '''
         Associate a request string with a function to call when that request is handled.
-        The first parameter should be the request string (e.g. "GET api") and the second should 
-        be a function to run when that request is handled. This should be passed without parentheses 
+        The first parameter should be the request method (e.g. GET), the second should 
+        be the resource (e.g. home) and the third should be a function to run when that 
+        request is handled. This should be passed without parentheses 
         (i.e. foo not foo()). 
         '''
         self.requests[f"{method} {resource}"] = handler

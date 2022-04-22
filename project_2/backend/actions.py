@@ -1,6 +1,5 @@
-from multiprocessing.sharedctypes import Value
 import posts
-import httpFormatter
+import modules.httpFormatter as httpFormatter
 import json
 
 def search(params):
