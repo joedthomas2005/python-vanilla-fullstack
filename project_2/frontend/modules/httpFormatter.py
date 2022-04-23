@@ -1,4 +1,4 @@
-httpCodes = {200: "OK", 400: "Bad Request", 403: "Forbidden", 404: "Not Found", 
+httpCodes = {200: "OK",201: "Created", 400: "Bad Request", 403: "Forbidden", 404: "Not Found", 
 405:"Method Not Allowed", 500: "Internal Server Error"}
 
 class httpRequest:
@@ -10,26 +10,43 @@ class httpRequest:
     def __init__(self, data):
         self.rawData = data
         try:
-            lines = data.split("\n")
+            lines = data.split("\r\n")
         
             print(lines[0])
             requestLine = lines[0].split(" ")
             self.method = requestLine[0]
             self.resource = requestLine[1][1:]
             self.protocol = requestLine[2]
+            
             self.paramLine = ""
             if "?" in self.resource:
                 self.paramLine = self.resource.split("?")[1]
                 self.resource = self.resource.split("?")[0]
             
+            
             self.params = {}
+
             if(self.paramLine):
                 for param in self.paramLine.split("&"):
                     print(param)
                     self.params[param.split("=")[0]] = param.split("=")[1]
+            
+            self.headers = {}
+            headerCount = 0
+            for i in range(1, len(lines)-1):
+                if(lines[i] == ""):
+                    headerCount = i
+                    print(f"END OF HEADER BLOCK AT {i}")
+                    break
+                
+                #print(f'HEADER {lines[i].split(":")[0]}: {"".join(lines[i].split(":")[1:])}')
+                self.headers[lines[i].split(":")[0]] = ''.join(lines[i].split(":")[1:])
+            
+            self.body = "".join(lines[headerCount:])
 
-        except:
-
+        except Exception as e:
+            
+            print(e)
             self.method = "NULL"
             self.resource = data
             self.paramLine = "NULL"

@@ -9,11 +9,19 @@ class requestHandler:
     '''
     def __init__(self):
         self.requests = {}
+        self.CORSmethods = {}
+        self.CORSheaders = {}
         self.default = self.loadfileunsafe
         self.siteDir = "./"
 
     def setDefault(self, function):
         self.default = function
+
+    def setCORSmethods(self, resource, *methods):
+        self.CORSmethods[resource] = ','.join(methods).upper()
+
+    def setCORSheaders(self, resource, *headers):
+        self.CORSheaders[resource] = ','.join(headers)
 
     def setSiteDir(self, directory):
         self.siteDir = f"{directory}/"
@@ -28,19 +36,36 @@ class requestHandler:
         '''
         self.requests[f"{method} {resource}"] = handler
     
-    def handle(self, method, resource, params):
+    def handle(self, request):
         '''
         Run the handler function associated with the given request string. The strings must match exactly.
         '''
-        request = f"{method} {resource}"
-        if(request in self.requests.keys()):
-            response = self.requests[request](params)
-        elif os.path.exists(self.siteDir + resource):
-            response = self.default(resource)
-        elif "GET " in request:
-            response = self.error(404)
-        elif "POST " in request:
+        requestString = f"{request.method} {request.resource}"
+        
+        if(requestString in self.requests.keys()):
+            response = self.requests[requestString](request.params, request.body)
+
+        elif request.method == "GET":
+            if(os.path.exists(self.siteDir + request.resource)):
+                response = self.default(request.resource)
+            else:
+                response = self.error(404)
+        
+        elif request.method == "OPTIONS":
+
+            if(request.resource in self.CORSmethods.keys()):
+                response = httpFormatter.httpResponse(200)
+                response.setHeader("Allow", self.CORSmethods[request.resource])
+            
+                if(request.resource in self.CORSheaders.keys()):
+                    response.setHeader("Access-Control-Allow-Headers", self.CORSheaders[request.resource])
+            
+            else:
+                response = self.error(500)
+
+        elif request.method == "POST":
             response = self.error(405)
+        
         else:
             response = self.error(400)
 

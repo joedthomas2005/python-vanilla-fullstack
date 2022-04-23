@@ -14,7 +14,7 @@ handler = requestHandler.requestHandler()
 handler.setDefault(handler.loadfilesafe)
 handler.setSiteDir("site")
 
-handler.addHandler("GET", "", lambda resource: handler.loadfilesafe("index.html"))
+handler.addHandler("GET", "", lambda x, y: handler.loadfilesafe("index.html"))
 
 while True:
     
@@ -23,7 +23,7 @@ while True:
     req = httpFormatter.httpRequest(data)
     
     try:
-        res = handler.handle(req.method, req.resource, req.params)
+        res = handler.handle(req)
         c.send(res.build())
     except Exception as e:
         print(f"\033[91m{e}\033[0m")
