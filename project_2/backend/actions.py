@@ -41,8 +41,8 @@ def readPost(params, body):
     """
     try:
         postId = int(params["id"])
+        
         postData = posts.readPostById(postId)
-
         if(postData):
             return httpFormatter.httpResponse(200, postData.encode())
         else:
@@ -71,9 +71,26 @@ def new(params, raw):
         return httpFormatter.httpResponse(400)
 
     try:    
-        posts.createPost(title, body)
+        postID = posts.createPost(title, body)
     except Exception as e:
         print("Could not create post: ", e)
         return httpFormatter.httpResponse(500)
         
-    return httpFormatter.httpResponse(201)
+    return httpFormatter.httpResponse(201, str(postID).encode())
+
+def delete(params, body):
+    
+    try:
+        postID = params["id"]
+    except:
+        return httpFormatter.httpResponse(400)
+    
+    try:
+        successful = posts.deletePost(postID)
+    except:
+        return httpFormatter.httpResponse(500)
+    
+    if(successful):
+        return httpFormatter.httpResponse(200, "true".encode())
+    else:
+        return httpFormatter.httpResponse(404, params["id"].encode())

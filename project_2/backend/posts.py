@@ -1,6 +1,7 @@
 #import mysql.connector
 import sqlite3
 import urllib.parse
+import os
 # credFile = open("sqlcreds.creds", "r")
 # fileData = credFile.readlines()
 # credFile.close()
@@ -61,7 +62,7 @@ def readPost(path):
 def getPostRecord(id):
     query = "SELECT id, title, path FROM posts WHERE id = ?"
     
-    cursor.execute(query, (id))
+    cursor.execute(query, (id,))
 
     for record in cursor:
         return record
@@ -116,4 +117,17 @@ def createPost(title, body):
 
     cursor.execute("INSERT INTO posts (id, title, path) VALUES (?, ?, ?)", (postID, title, path))
     db.commit()
+    
+    return postID
 
+def deletePost(id):
+    record = getPostRecord(id)
+    if(record):
+        path = record[2]
+        os.remove(path)
+        query = "DELETE FROM posts WHERE id=?"
+        cursor.execute(query, (id,))
+        db.commit()
+        return True
+    else:
+        return False

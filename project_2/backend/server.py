@@ -18,7 +18,8 @@ handler.setDefault(handler.notfound)
 handler.addHandler("GET", "search", actions.search)
 handler.addHandler("GET", "posts", actions.readPost)
 handler.addHandler("POST", "posts", actions.new)
-handler.setCORSmethods("posts", "GET", "POST")
+handler.addHandler("DELETE", "posts", actions.delete)
+handler.setCORSmethods("posts", "GET", "POST", "DELETE")
 handler.setCORSheaders("posts", "Content-Type")
 
 while True:

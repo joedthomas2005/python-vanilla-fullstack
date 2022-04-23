@@ -39,10 +39,9 @@ class httpRequest:
                     print(f"END OF HEADER BLOCK AT {i}")
                     break
                 
-                #print(f'HEADER {lines[i].split(":")[0]}: {"".join(lines[i].split(":")[1:])}')
                 self.headers[lines[i].split(":")[0]] = ''.join(lines[i].split(":")[1:])
-            
-            self.body = "".join(lines[headerCount:])
+            self.body = "" 
+            self.body += "".join(lines[headerCount:])
 
         except Exception as e:
             
@@ -52,6 +51,7 @@ class httpRequest:
             self.paramLine = "NULL"
             self.protocol = "NULL"
             self.params = {}
+            self.body = ""
 
 class httpResponse:
     '''
