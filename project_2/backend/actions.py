@@ -1,13 +1,14 @@
+import http
+import json
 import posts
 import modules.httpFormatter as httpFormatter
-import json
 
-def search(params, body):
+
+def search(params: dict, body: str) -> httpFormatter.httpResponse:
     """
     Requires the parameters "query" and "count". Searches the database for any posts who's titles
     contain any of the words in the query and returns a set of posts up to a maximum set by count.
     """
-
     try:
         query = params["query"]
         count = int(params["count"])
@@ -35,7 +36,7 @@ def search(params, body):
         return httpFormatter.httpResponse(500)
 
 
-def readPost(params, body):
+def readPost(params: dict, body: str) -> httpFormatter.httpResponse:
     """
     Requires the parameter "id". Gets the contents of the requested post by its ID in the database.
     """
@@ -43,10 +44,10 @@ def readPost(params, body):
         postId = int(params["id"])
         
         postData = posts.readPostById(postId)
-        if(postData):
+
+        if postData:
             return httpFormatter.httpResponse(200, postData.encode())
-        else:
-            return httpFormatter.httpResponse(404)
+        return httpFormatter.httpResponse(404)
     
     except (ValueError, KeyError):
 
@@ -55,30 +56,30 @@ def readPost(params, body):
     except:
         return httpFormatter.httpResponse(500)
         
-def new(params, raw):
+def new(params: dict, body: str) -> httpFormatter.httpResponse:
 
     try:
-        postJSON = json.loads(raw)
+        postJSON = json.loads(body)
     except:
         print("INVALID JSON")
         return httpFormatter.httpResponse(400)
     
     try:
         title = postJSON["postTitle"]
-        body = postJSON["postBody"]
+        postBody = postJSON["postBody"]
     except:
         print("Key Error")
         return httpFormatter.httpResponse(400)
 
     try:    
-        postID = posts.createPost(title, body)
+        postID = posts.createPost(title, postBody)
     except Exception as e:
         print("Could not create post: ", e)
         return httpFormatter.httpResponse(500)
         
     return httpFormatter.httpResponse(201, str(postID).encode())
 
-def delete(params, body):
+def delete(params: dict, body: str) -> httpFormatter.httpResponse:
     
     try:
         postID = params["id"]
@@ -90,7 +91,7 @@ def delete(params, body):
     except:
         return httpFormatter.httpResponse(500)
     
-    if(successful):
+    if successful:
         return httpFormatter.httpResponse(200, "true".encode())
-    else:
-        return httpFormatter.httpResponse(404, params["id"].encode())
+
+    return httpFormatter.httpResponse(404, params["id"].encode())

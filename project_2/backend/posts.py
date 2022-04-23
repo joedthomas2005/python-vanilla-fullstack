@@ -16,16 +16,16 @@ import os
 # )
 
 # cursor = db.cursor()
-sqliteDB = 'blogapp.db'
+SQLITEDB = 'blogapp.db'
 
-db = sqlite3.connect(sqliteDB)
+db = sqlite3.connect(SQLITEDB)
 cursor = db.cursor()
 
-def search(query, limit):
+def search(query: str, limit: int) -> list:
     
     queryTerms = urllib.parse.unquote(query).split(" ")
-    for i in range(len(queryTerms)):
-        queryTerms[i] = f"%{queryTerms[i]}%"
+    
+    queryTerms = [f"%{queryTerm}%" for queryTerm in queryTerms]
     
     SQLquery = "SELECT id, title, path FROM posts WHERE title LIKE "
 
@@ -34,23 +34,22 @@ def search(query, limit):
         if i == len(queryTerms) - 1:
             SQLquery += "? "
         else:
-            SQLquery += f"? OR title LIKE "
+            SQLquery += "? OR title LIKE "
 
-    SQLquery += f"OR id=? ORDER BY id DESC LIMIT ?"
+    SQLquery += "OR id=? ORDER BY id DESC LIMIT ?"
 
     print("SQL query: " + SQLquery)
     print("Parameters: ", queryTerms + [query] + [limit])
     cursor.execute(SQLquery, queryTerms + [query] + [limit])
 
-    results = [result for result in cursor]
-    return results
+    return list(cursor)
 
-def readPostById(id):
+def readPostById(postID: int) -> str:
     
-    path = getPath(id)
+    path = getPath(postID)
     return readPost(path)
 
-def readPost(path):
+def readPost(path: str) -> str:
     try:
         post = open(path, "r")
     except:
@@ -59,50 +58,48 @@ def readPost(path):
     post.close()
     return data
 
-def getPostRecord(id):
-    query = "SELECT id, title, path FROM posts WHERE id = ?"
-    
-    cursor.execute(query, (id,))
+def getPostRecord(postID: int) -> tuple:
+
+    query = "SELECT id, title, path FROM posts WHERE id = ?"    
+    cursor.execute(query, (postID,))
 
     for record in cursor:
         return record
     
 
 def getRecentPosts(number: int) -> list:
-    query = "SELECT * FROM posts ORDER BY id DESC LIMIT ?"
 
+    query = "SELECT * FROM posts ORDER BY id DESC LIMIT ?"
     cursor.execute(query, (number,))
 
-    return [record for record in cursor]
+    return list(cursor)
 
-def getRecent(property, number = 1):
+def getRecent(column: str, number:int = 1) -> list:
 
-    query = f"SELECT {property} FROM posts ORDER BY id DESC LIMIT ?"
+    query = f"SELECT {column} FROM posts ORDER BY id DESC LIMIT ?"
     cursor.execute(query, (number,))
     
-    return [record for record in cursor]
+    return list(cursor)
 
-def getPath(id):
-    if(getPostRecord(id)):
-        return getPostRecord(id)[2]
+def getPath(postID: int) -> str:
+    record = getPostRecord(postID)
+    if record:
+        return record[2]
     return ""
 
-def getTitle(id):
-    if(getPostRecord(id)):
-        return getPostRecord(id)[1]
+def getTitle(postID: int) -> str:
+    record = getPostRecord(postID)
+    if record:
+        return record[1]
     return ""
 
-def getPostData(id):
+def getPostData(postID: int) -> str:
+    return readPost(getPath(postID))
 
-    return readPost(getPath(id))
-
-for post in getRecentPosts(10):
-    print(post)
-
-def createPost(title, body):
+def createPost(title: str, body: str) -> int:
     recentEntries = getRecent("id")
-    if(len(recentEntries) > 0):
-        postID = int(getRecent("id")[0][0]) + 1
+    if len(recentEntries) > 0:
+        postID = int(recentEntries[0][0]) + 1
     else:
         postID = 1
         
@@ -111,23 +108,23 @@ def createPost(title, body):
     path = f"posts/{postID}.txt"
     print("PATH: ", path)
     print("BODY: ", body)
-    file = open(path, 'w')
-    file.write(body)
-    file.close()
+
+    with open(path, 'w') as file:
+        file.write(body)
 
     cursor.execute("INSERT INTO posts (id, title, path) VALUES (?, ?, ?)", (postID, title, path))
     db.commit()
     
     return postID
 
-def deletePost(id):
-    record = getPostRecord(id)
-    if(record):
+def deletePost(postID: int) -> bool:
+    record = getPostRecord(postID)
+    if record:
+        
         path = record[2]
         os.remove(path)
         query = "DELETE FROM posts WHERE id=?"
-        cursor.execute(query, (id,))
+        cursor.execute(query, (postID,))
         db.commit()
         return True
-    else:
-        return False
+    return False

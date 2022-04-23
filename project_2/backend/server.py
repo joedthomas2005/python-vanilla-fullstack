@@ -1,6 +1,5 @@
 import socket
 import actions
-import sys
 
 import modules.httpFormatter as httpFormatter
 import modules.requestHandler as requestHandler
