@@ -1,5 +1,5 @@
-httpCodes = {200: "OK", 400: "Bad Request", 403: "Forbidden", 404: "Not Found", 
-405:"Method Not Allowed",500: "Internal Server Error"}
+httpCodes = {200: "OK",201: "Created", 400: "Bad Request", 403: "Forbidden", 404: "Not Found", 
+405:"Method Not Allowed", 500: "Internal Server Error"}
 
 class httpRequest:
     '''
@@ -10,26 +10,43 @@ class httpRequest:
     def __init__(self, data):
         self.rawData = data
         try:
-            lines = data.split("\n")
+            lines = data.split("\r\n")
         
             print(lines[0])
             requestLine = lines[0].split(" ")
             self.method = requestLine[0]
             self.resource = requestLine[1][1:]
             self.protocol = requestLine[2]
+            
             self.paramLine = ""
             if "?" in self.resource:
                 self.paramLine = self.resource.split("?")[1]
                 self.resource = self.resource.split("?")[0]
             
+            
             self.params = {}
+
             if(self.paramLine):
                 for param in self.paramLine.split("&"):
                     print(param)
                     self.params[param.split("=")[0]] = param.split("=")[1]
+            
+            self.headers = {}
+            headerCount = 0
+            for i in range(1, len(lines)-1):
+                if(lines[i] == ""):
+                    headerCount = i
+                    print(f"END OF HEADER BLOCK AT {i}")
+                    break
+                
+                #print(f'HEADER {lines[i].split(":")[0]}: {"".join(lines[i].split(":")[1:])}')
+                self.headers[lines[i].split(":")[0]] = ''.join(lines[i].split(":")[1:])
+            
+            self.body = "".join(lines[headerCount:])
 
-        except:
-
+        except Exception as e:
+            
+            print(e)
             self.method = "NULL"
             self.resource = data
             self.paramLine = "NULL"
@@ -41,16 +58,16 @@ class httpResponse:
     Construct a valid structured HTTP response with a given status code (A dictionary containing them is at the top of the file 
     this is declared in). 
     '''
-    def __init__(self, status, data = "", type = "text/html", protocol = "HTTP/1.1"):
+    def __init__(self, status, data = b"", type = "text/html", protocol = "HTTP/1.1"):
         '''
         Construct a valid structured HTTP response with a given status code (A dictionary containing them is at the top of the file 
         this is declared in) and any extra data required.
         '''
         self.headers = {}
         self.headers["Content-type"] = type
-        self.headers["Content-Length"] = len(data.encode())
+        self.headers["Content-Length"] = len(data)
 
-        self.responseLine = f"{protocol} {status} {httpCodes[status]}"
+        self.responseLine = f"{protocol} {status} {httpCodes[status]}".encode()
 
         self.data = data
     
@@ -64,9 +81,9 @@ class httpResponse:
         '''
         Construct the request and return it as a raw string.
         '''
-        text = self.responseLine + "\n"
+        text = self.responseLine + b"\n"
         for key in self.headers.keys():
-            text += f"{key}: {self.headers[key]}\n"
-        text += "\n" + self.data
+            text += f"{key}: {self.headers[key]}\n".encode()
+        text += b'\n' + self.data
         return text
 

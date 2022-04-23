@@ -17,6 +17,9 @@ handler = requestHandler.requestHandler()
 handler.setDefault(handler.notfound)
 handler.addHandler("GET", "search", actions.search)
 handler.addHandler("GET", "posts", actions.readPost)
+handler.addHandler("POST", "posts", actions.new)
+handler.setCORSmethods("posts", "GET", "POST")
+handler.setCORSheaders("posts", "Content-Type")
 
 while True:
 
@@ -24,10 +27,10 @@ while True:
     data = c.recv(1024).decode()
 
     request = httpFormatter.httpRequest(data)
-    print(f"{request.method} REQUEST FOR {request.resource} WITH PARAMS {request.params}")
+    print(f"{request.method} REQUEST FOR {request.resource} WITH PARAMS {request.params} AND BODY {request.body}")
 
-    response = handler.handle(request.method, request.resource, request.params)
+    response = handler.handle(request)
     
-    c.send(response.build().encode())
+    c.send(response.build())
     c.close()
     

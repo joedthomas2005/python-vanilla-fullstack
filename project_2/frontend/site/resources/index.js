@@ -1,4 +1,5 @@
 let API = "http://127.0.0.1:3001"
+window.addEventListener('load', load)
 
 function load() {
 
@@ -17,6 +18,7 @@ function load() {
     })
 
     searchAPI("", 10);
+
 }
 
 function searchAPI(search, count) {
@@ -42,17 +44,18 @@ function searchAPI(search, count) {
 
 function createCard(post) {
 
-    element = document.createElement("div");
+    let element = document.createElement("div");
     element.classList.add("card");
 
-    headerContainer = document.createElement("h2");
+    let headerContainer = document.createElement("h2");
     headerContainer.classList.add("cardHeader");
 
-    bodyContainer = document.createElement("p");
+    let bodyContainer = document.createElement("p");
     bodyContainer.classList.add("cardBody");
 
-    header = document.createTextNode(post.title);
-    body = document.createTextNode(post.body);
+    let header = document.createTextNode(post.title);
+    let body = document.createTextNode(post.body);
+
     headerContainer.appendChild(header);
     bodyContainer.appendChild(body);
 

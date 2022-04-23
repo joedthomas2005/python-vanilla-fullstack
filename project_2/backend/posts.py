@@ -23,19 +23,23 @@ cursor = db.cursor()
 def search(query, limit):
     
     queryTerms = urllib.parse.unquote(query).split(" ")
+    for i in range(len(queryTerms)):
+        queryTerms[i] = f"%{queryTerms[i]}%"
+    
     SQLquery = "SELECT id, title, path FROM posts WHERE title LIKE "
 
     for i in range(len(queryTerms)):
 
         if i == len(queryTerms) - 1:
-            SQLquery += f"\"%{queryTerms[i]}%\" "
+            SQLquery += "? "
         else:
-            SQLquery += f"\"%{queryTerms[i]}%\" OR title LIKE "
+            SQLquery += f"? OR title LIKE "
 
-    SQLquery += f"OR id=\"{query}\" ORDER BY id DESC LIMIT {limit}"
+    SQLquery += f"OR id=? ORDER BY id DESC LIMIT ?"
 
     print("SQL query: " + SQLquery)
-    cursor.execute(SQLquery)
+    print("Parameters: ", queryTerms + [query] + [limit])
+    cursor.execute(SQLquery, queryTerms + [query] + [limit])
 
     results = [result for result in cursor]
     return results
@@ -55,25 +59,25 @@ def readPost(path):
     return data
 
 def getPostRecord(id):
-    query = f"SELECT id, title, path FROM posts WHERE id = {id}"
+    query = "SELECT id, title, path FROM posts WHERE id = ?"
     
-    cursor.execute(query)
+    cursor.execute(query, (id))
 
     for record in cursor:
         return record
     
 
 def getRecentPosts(number: int) -> list:
-    query = f"SELECT * FROM posts ORDER BY id DESC LIMIT {number}"
+    query = "SELECT * FROM posts ORDER BY id DESC LIMIT ?"
 
-    cursor.execute(query)
+    cursor.execute(query, (number,))
 
     return [record for record in cursor]
 
-def getRecent(property, number):
+def getRecent(property, number = 1):
 
-    query = f"SELECT {property} FROM posts ORDER BY id DESC LIMIT {number}"
-    cursor.execute(query)
+    query = f"SELECT {property} FROM posts ORDER BY id DESC LIMIT ?"
+    cursor.execute(query, (number,))
     
     return [record for record in cursor]
 
@@ -93,3 +97,23 @@ def getPostData(id):
 
 for post in getRecentPosts(10):
     print(post)
+
+def createPost(title, body):
+    recentEntries = getRecent("id")
+    if(len(recentEntries) > 0):
+        postID = int(getRecent("id")[0][0]) + 1
+    else:
+        postID = 1
+        
+    print("ID: ", postID)
+    print("TITLE: ", title)
+    path = f"posts/{postID}.txt"
+    print("PATH: ", path)
+    print("BODY: ", body)
+    file = open(path, 'w')
+    file.write(body)
+    file.close()
+
+    cursor.execute("INSERT INTO posts (id, title, path) VALUES (?, ?, ?)", (postID, title, path))
+    db.commit()
+

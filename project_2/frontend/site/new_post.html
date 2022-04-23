@@ -2,7 +2,31 @@
 
 <html>
     <head>
-        <link rel="stylesheet" href="resources/index.css">
-        <script src="newpost.js"></script>
+        <link rel="stylesheet" href="resources/header.css">
+        <link rel="stylesheet" href="resources/new_post.css">
+        <script src="resources/new_post.js"></script>
     </head>
+
+    <body>
+        <div id="header">
+            <h1 id="title">
+                Blog Posts
+            </h1>
+            <div id="actions">
+                <h2 id="subheading">
+                    New Post
+                </h2>
+            </div>
+
+            <div id="icons">
+                <a href="index.html"><img src="resources/home.png"></a>
+            </div>
+        </div>
+        <div id="content">
+            <input type="text" placeholder="Post Title" id="titlebox" name="title">
+            <input type="text" placeholder="Post Body" id="bodybox" name="body">
+            <input type="submit" value="Submit" id="formsubmit">
+        </div>
+    
+    </body>
 </html>

@@ -2,7 +2,7 @@ import posts
 import modules.httpFormatter as httpFormatter
 import json
 
-def search(params):
+def search(params, body):
     """
     Requires the parameters "query" and "count". Searches the database for any posts who's titles
     contain any of the words in the query and returns a set of posts up to a maximum set by count.
@@ -23,7 +23,7 @@ def search(params):
                 "body": posts.readPost(databaseEntries[i][2])
             })
         
-        return httpFormatter.httpResponse(200,  json.dumps(items))
+        return httpFormatter.httpResponse(200,  json.dumps(items).encode())
 
     except (KeyError, ValueError):
 
@@ -35,7 +35,7 @@ def search(params):
         return httpFormatter.httpResponse(500)
 
 
-def readPost(params):
+def readPost(params, body):
     """
     Requires the parameter "id". Gets the contents of the requested post by its ID in the database.
     """
@@ -44,7 +44,7 @@ def readPost(params):
         postData = posts.readPostById(postId)
 
         if(postData):
-            return httpFormatter.httpResponse(200, postData)
+            return httpFormatter.httpResponse(200, postData.encode())
         else:
             return httpFormatter.httpResponse(404)
     
@@ -55,3 +55,25 @@ def readPost(params):
     except:
         return httpFormatter.httpResponse(500)
         
+def new(params, raw):
+
+    try:
+        postJSON = json.loads(raw)
+    except:
+        print("INVALID JSON")
+        return httpFormatter.httpResponse(400)
+    
+    try:
+        title = postJSON["postTitle"]
+        body = postJSON["postBody"]
+    except:
+        print("Key Error")
+        return httpFormatter.httpResponse(400)
+
+    try:    
+        posts.createPost(title, body)
+    except Exception as e:
+        print("Could not create post: ", e)
+        return httpFormatter.httpResponse(500)
+        
+    return httpFormatter.httpResponse(201)
