@@ -3,8 +3,10 @@ httpCodes = {200: "OK", 201: "Created", 400: "Bad Request", 403: "Forbidden", 40
 
 class httpRequest:
     '''
-    This class's constructor splits apart a given HTTP request and stores its method (GET, POST, PUT, HEAD etc), 
-    resource requested, the HTTP protocol used (HTTP/1.0 HTTP/1.1 etc) and any parameters in the request (additional pieces of 
+    This class's constructor splits apart a given HTTP request 
+    and stores its method (GET, POST, PUT, HEAD etc), 
+    resource requested, the HTTP protocol used (HTTP/1.0 HTTP/1.1 etc) 
+    and any parameters in the request (additional pieces of 
     data placed after a ? in the URL and separated with & characters).
     '''
     def __init__(self, data: str):
@@ -25,20 +27,20 @@ class httpRequest:
             
             self.params = {}
 
-            if(self.paramLine):
+            if self.paramLine:
                 for param in self.paramLine.split("&"):
-                    print(param)
                     self.params[param.split("=")[0]] = param.split("=")[1]
             
             self.headers = {}
             headerCount = 0
             for i in range(1, len(lines)-1):
-                if(lines[i] == ""):
+                if lines[i] == "":
                     headerCount = i
                     print(f"END OF HEADER BLOCK AT {i}")
                     break
                 
                 self.headers[lines[i].split(":")[0]] = ''.join(lines[i].split(":")[1:])
+
             self.body = "" 
             self.body += "".join(lines[headerCount: ])
 
@@ -54,13 +56,15 @@ class httpRequest:
 
 class httpResponse:
     '''
-    Construct a valid structured HTTP response with a given status code (A dictionary containing them is at the top of the file 
+    Construct a valid structured HTTP response with a given status code 
+    (A dictionary containing them is at the top of the file 
     this is declared in). 
     '''
     def __init__(self, status: int, data: bytes = b"", 
         mimetype: str = "text/html", protocol: str = "HTTP/1.1"):
         '''
-        Construct a valid structured HTTP response with a given status code (A dictionary containing them is at the top of the file 
+        Construct a valid structured HTTP response with a given status code 
+        (A dictionary containing them is at the top of the file 
         this is declared in) and any extra data required.
         '''
         self.headers = {}
@@ -73,7 +77,8 @@ class httpResponse:
     
     def setHeader(self, key: str, value: str) -> None:
         '''
-        Set a specified header to a specified value (these give extra data to the browser about the response).
+        Set a specified header to a specified value 
+        (these give extra data to the browser about the response).
         '''
         self.headers[key] = value
     
@@ -86,4 +91,3 @@ class httpResponse:
             text += f"{key}: {self.headers[key]}\n".encode()
         text += b'\n' + self.data
         return text
-

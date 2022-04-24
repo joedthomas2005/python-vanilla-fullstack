@@ -37,7 +37,7 @@ def readPostById(postID: int) -> str:
 
 def readPost(path: str) -> str:
 
-    with open(path, "r") as post:
+    with open(path, "r", encoding = "UTF-8") as post:
         data = post.read()
     return data
 
@@ -93,7 +93,7 @@ def createPost(title: str, body: str) -> int:
     print("PATH: ", path)
     print("BODY: ", body)
 
-    with open(path, 'w') as file:
+    with open(path, 'w', encoding = "UTF-8") as file:
         file.write(body)
 
     cursor.execute("INSERT INTO posts (id, title, path) VALUES (?, ?, ?)", (postID, title, path))
