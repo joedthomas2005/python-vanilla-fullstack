@@ -1,95 +1,114 @@
-#import mysql.connector
 import sqlite3
 import urllib.parse
-# credFile = open("sqlcreds.creds", "r")
-# fileData = credFile.readlines()
-# credFile.close()
-# user = fileData[0].strip("\n")
-# password = fileData[1].strip("\n")
+import os
 
-# db = mysql.connector.connect(
-#     host = "localhost",
-#     user = user,
-#     password = password,
-#     database = "blogapp"
-# )
+SQLITEDB = 'blogapp.db'
 
-# cursor = db.cursor()
-sqliteDB = 'blogapp.db'
-
-db = sqlite3.connect(sqliteDB)
+db = sqlite3.connect(SQLITEDB)
 cursor = db.cursor()
 
-def search(query, limit):
+def search(query: str, limit: int) -> list:
     
     queryTerms = urllib.parse.unquote(query).split(" ")
+    
+    queryTerms = [f"%{queryTerm}%" for queryTerm in queryTerms]
+    
     SQLquery = "SELECT id, title, path FROM posts WHERE title LIKE "
 
     for i in range(len(queryTerms)):
 
         if i == len(queryTerms) - 1:
-            SQLquery += f"\"%{queryTerms[i]}%\" "
+            SQLquery += "? "
         else:
-            SQLquery += f"\"%{queryTerms[i]}%\" OR title LIKE "
+            SQLquery += "? OR title LIKE "
 
-    SQLquery += f"OR id=\"{query}\" ORDER BY id DESC LIMIT {limit}"
+    SQLquery += "OR id=? ORDER BY id DESC LIMIT ?"
 
     print("SQL query: " + SQLquery)
-    cursor.execute(SQLquery)
+    print("Parameters: ", queryTerms + [query] + [limit])
+    cursor.execute(SQLquery, queryTerms + [query] + [limit])
 
-    results = [result for result in cursor]
-    return results
+    return list(cursor)
 
-def readPostById(id):
+def readPostById(postID: int) -> str:
     
-    path = getPath(id)
+    path = getPath(postID)
     return readPost(path)
 
-def readPost(path):
-    try:
-        post = open(path, "r")
-    except:
-        return ""
-    data = post.read()
-    post.close()
+def readPost(path: str) -> str:
+
+    with open(path, "r", encoding = "UTF-8") as post:
+        data = post.read()
     return data
 
-def getPostRecord(id):
-    query = f"SELECT id, title, path FROM posts WHERE id = {id}"
-    
-    cursor.execute(query)
+
+
+def getPostRecord(postID: int) -> tuple:
+    query = "SELECT id, title, path FROM posts WHERE id = ?"    
+    cursor.execute(query, (postID,))
 
     for record in cursor:
         return record
     
 
 def getRecentPosts(number: int) -> list:
-    query = f"SELECT * FROM posts ORDER BY id DESC LIMIT {number}"
 
-    cursor.execute(query)
+    query = "SELECT * FROM posts ORDER BY id DESC LIMIT ?"
+    cursor.execute(query, (number,))
 
-    return [record for record in cursor]
+    return list(cursor)
 
-def getRecent(property, number):
+def getRecent(column: str, number: int = 1) -> list:
 
-    query = f"SELECT {property} FROM posts ORDER BY id DESC LIMIT {number}"
-    cursor.execute(query)
+    query = f"SELECT {column} FROM posts ORDER BY id DESC LIMIT ?"
+    cursor.execute(query, (number,))
     
-    return [record for record in cursor]
+    return list(cursor)
 
-def getPath(id):
-    if(getPostRecord(id)):
-        return getPostRecord(id)[2]
+def getPath(postID: int) -> str:
+    record = getPostRecord(postID)
+    if record:
+        return record[2]
     return ""
 
-def getTitle(id):
-    if(getPostRecord(id)):
-        return getPostRecord(id)[1]
+def getTitle(postID: int) -> str:
+    record = getPostRecord(postID)
+    if record:
+        return record[1]
     return ""
 
-def getPostData(id):
+def getPostData(postID: int) -> str:
+    return readPost(getPath(postID))
 
-    return readPost(getPath(id))
+def createPost(title: str, body: str) -> int:
+    recentEntries = getRecent("id")
+    if len(recentEntries) > 0:
+        postID = int(recentEntries[0][0]) + 1
+    else:
+        postID = 1
+        
+    print("ID: ", postID)
+    print("TITLE: ", title)
+    path = f"posts/{postID}.txt"
+    print("PATH: ", path)
+    print("BODY: ", body)
 
-for post in getRecentPosts(10):
-    print(post)
+    with open(path, 'w', encoding = "UTF-8") as file:
+        file.write(body)
+
+    cursor.execute("INSERT INTO posts (id, title, path) VALUES (?, ?, ?)", (postID, title, path))
+    db.commit()
+    
+    return postID
+
+def deletePost(postID: int) -> bool:
+    record = getPostRecord(postID)
+    if record:
+        
+        path = record[2]
+        os.remove(path)
+        query = "DELETE FROM posts WHERE id=?"
+        cursor.execute(query, (postID,))
+        db.commit()
+        return True
+    return False
