@@ -1,6 +1,6 @@
 const API = "http://127.0.0.1:3001"
 
-function submitPost(){
+function submitPost() {
 
     const url = `${API}/posts`
     const title = document.getElementById("titlebox").value;
@@ -14,13 +14,18 @@ function submitPost(){
         "postBody": body
     }))
 
-    req.onreadystatechange = ()=>{
-        if(req.readyState === 4){
-            if(req.status === 201){
-                alert("Post Made!");
-            }
-            else{
-                alert("Sorry, something went wrong...");
+    req.onreadystatechange = () => {
+        if (req.readyState === 4) {
+            if (req.status === 201) {
+                const element = document.createElement("p");
+                element.classList.add("success");
+                element.appendChild(document.createTextNode("Post Created!"));
+                document.getElementById("content").appendChild(element);
+            } else {
+                const element = document.createElement("p");
+                element.classList.add("failure");
+                element.appendChild(document.createTextNode("Sorry, something went wrong..."));
+                document.getElementById("content").appendChild(element);
             }
         }
     }
@@ -28,7 +33,7 @@ function submitPost(){
 
 function load() {
     document.getElementById("bodybox").addEventListener("keyup", (event) => {
-        if(event.key === "Enter"){
+        if (event.key === "Enter") {
             submitPost();
         }
     });

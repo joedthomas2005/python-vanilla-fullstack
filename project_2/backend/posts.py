@@ -36,17 +36,14 @@ def readPostById(postID: int) -> str:
     return readPost(path)
 
 def readPost(path: str) -> str:
-    try:
 
-        with open(path, "r") as post:
-            data = post.read()
-        return data
+    with open(path, "r") as post:
+        data = post.read()
+    return data
 
-    except:
-        return ""
+
 
 def getPostRecord(postID: int) -> tuple:
-
     query = "SELECT id, title, path FROM posts WHERE id = ?"    
     cursor.execute(query, (postID,))
 

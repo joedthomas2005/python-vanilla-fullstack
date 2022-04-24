@@ -42,7 +42,7 @@ class httpRequest:
             self.body = "" 
             self.body += "".join(lines[headerCount: ])
 
-        except Exception as e:
+        except Exception as e: # skipcq
             
             print(e)
             self.method = "NULL"

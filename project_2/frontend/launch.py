@@ -25,7 +25,8 @@ while True:
     try:
         res = handler.handle(req)
         c.send(res.build())
-    except Exception as e:
+
+    except Exception as e: # skipcq
         print(f"\033[91m{e}\033[0m")
         c.send(httpFormatter.httpResponse(500).build())
     c.close()

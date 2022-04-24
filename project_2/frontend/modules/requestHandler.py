@@ -99,10 +99,10 @@ class requestHandler:
 def error(status: int) -> httpFormatter.httpResponse:
     return httpFormatter.httpResponse(status)
 
-def notfound(resource: str) -> httpFormatter.httpResponse:
+def notfound(_: str) -> httpFormatter.httpResponse:
         return error(404)
 
-def forbidden(resource: str) -> httpFormatter.httpResponse:
+def forbidden(_: str) -> httpFormatter.httpResponse:
         return error(403)
 
 def getMimeType(path: str) -> str:

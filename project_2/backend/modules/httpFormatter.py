@@ -39,10 +39,11 @@ class httpRequest:
                     break
                 
                 self.headers[lines[i].split(":")[0]] = ''.join(lines[i].split(":")[1:])
+
             self.body = "" 
             self.body += "".join(lines[headerCount: ])
 
-        except Exception as e:
+        except Exception as e: # skipcq
             
             print(e)
             self.method = "NULL"
