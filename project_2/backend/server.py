@@ -27,7 +27,8 @@ while True:
     data = c.recv(1024).decode()
 
     request = httpFormatter.httpRequest(data)
-    print(f"{request.method} REQUEST FOR {request.resource} WITH PARAMS {request.params} AND BODY {request.body}")
+    print(f"""{request.method} REQUEST FOR {request.resource} 
+    WITH PARAMS {request.params} AND BODY {request.body}""")
 
     response = handler.handle(request)
     

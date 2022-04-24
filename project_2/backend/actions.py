@@ -26,14 +26,11 @@ def search(params: dict, body: str) -> httpFormatter.httpResponse:
         return httpFormatter.httpResponse(200,  json.dumps(items).encode())
 
     except (KeyError, ValueError):
-
         return httpFormatter.httpResponse(400)
-    
-    except Exception as e:
 
+    except Exception as e:
         print("Unhandled exception occured: ", e)
         return httpFormatter.httpResponse(500)
-
 
 def readPost(params: dict, body: str) -> httpFormatter.httpResponse:
     """
@@ -43,16 +40,15 @@ def readPost(params: dict, body: str) -> httpFormatter.httpResponse:
         postId = int(params["id"])
         
         postData = posts.readPostById(postId)
-
         if postData:
             return httpFormatter.httpResponse(200, postData.encode())
         return httpFormatter.httpResponse(404)
-    
-    except (ValueError, KeyError):
 
+    except (ValueError, KeyError):
         return httpFormatter.httpResponse(400)
     
-    except:
+    except Exception as e:
+        print("Unhandled Exception Occured: " + e)
         return httpFormatter.httpResponse(500)
         
 def new(params: dict, body: str) -> httpFormatter.httpResponse:

@@ -57,15 +57,13 @@ class requestHandler:
                 response = error(404)
         
         elif request.method == "OPTIONS":
-
             if request.resource in self.CORSmethods:
                 response = httpFormatter.httpResponse(200)
                 response.setHeader("Allow", self.CORSmethods[request.resource])
-            
+                
                 if request.resource in self.CORSheaders:
                     response.setHeader("Access-Control-Allow-Headers", 
                     self.CORSheaders[request.resource])
-            
             else:
                 response = error(500)
 

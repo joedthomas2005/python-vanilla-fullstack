@@ -1,21 +1,12 @@
-window.addEventListener("load", load);
-let API = "http://127.0.0.1:3001"
-
-function load() {
-    document.getElementById("bodybox").addEventListener("keyup", (event) => {
-        if(event.key === "Enter"){
-            submitPost();
-        }
-    });
-}
+const API = "http://127.0.0.1:3001"
 
 function submitPost(){
 
-    let url = `${API}/posts`
-    let title = document.getElementById("titlebox").value;
-    let body = document.getElementById("bodybox").value;
+    const url = `${API}/posts`
+    const title = document.getElementById("titlebox").value;
+    const body = document.getElementById("bodybox").value;
 
-    let req = new XMLHttpRequest()
+    const req = new XMLHttpRequest()
     req.open("POST", url)
     req.setRequestHeader("Content-Type", "application/json")
     req.send(JSON.stringify({
@@ -33,5 +24,13 @@ function submitPost(){
             }
         }
     }
-
 }
+
+function load() {
+    document.getElementById("bodybox").addEventListener("keyup", (event) => {
+        if(event.key === "Enter"){
+            submitPost();
+        }
+    });
+}
+window.addEventListener("load", load);

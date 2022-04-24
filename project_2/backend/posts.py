@@ -61,7 +61,7 @@ def getRecentPosts(number: int) -> list:
 
     return list(cursor)
 
-def getRecent(column: str, number:int = 1) -> list:
+def getRecent(column: str, number: int = 1) -> list:
 
     query = f"SELECT {column} FROM posts ORDER BY id DESC LIMIT ?"
     cursor.execute(query, (number,))

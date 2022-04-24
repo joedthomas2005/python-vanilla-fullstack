@@ -1,5 +1,5 @@
-httpCodes = {200: "OK",201: "Created", 400: "Bad Request", 403: "Forbidden", 404: "Not Found", 
-405:"Method Not Allowed", 500: "Internal Server Error"}
+httpCodes = {200: "OK", 201: "Created", 400: "Bad Request", 403: "Forbidden", 404: "Not Found", 
+405: "Method Not Allowed", 500: "Internal Server Error"}
 
 class httpRequest:
     '''
@@ -23,7 +23,6 @@ class httpRequest:
                 self.paramLine = self.resource.split("?")[1]
                 self.resource = self.resource.split("?")[0]
             
-            
             self.params = {}
 
             if(self.paramLine):
@@ -41,7 +40,7 @@ class httpRequest:
                 
                 self.headers[lines[i].split(":")[0]] = ''.join(lines[i].split(":")[1:])
             self.body = "" 
-            self.body += "".join(lines[headerCount:])
+            self.body += "".join(lines[headerCount: ])
 
         except Exception as e:
             
@@ -58,8 +57,8 @@ class httpResponse:
     Construct a valid structured HTTP response with a given status code (A dictionary containing them is at the top of the file 
     this is declared in). 
     '''
-    def __init__(self, status: int, data:bytes = b"", 
-        mimetype:str = "text/html", protocol:str = "HTTP/1.1"):
+    def __init__(self, status: int, data: bytes = b"", 
+        mimetype: str = "text/html", protocol: str = "HTTP/1.1"):
         '''
         Construct a valid structured HTTP response with a given status code (A dictionary containing them is at the top of the file 
         this is declared in) and any extra data required.
