@@ -59,13 +59,13 @@ class httpResponse:
     this is declared in). 
     '''
     def __init__(self, status: int, data:bytes = b"", 
-        type:str = "text/html", protocol:str = "HTTP/1.1"):
+        mimetype:str = "text/html", protocol:str = "HTTP/1.1"):
         '''
         Construct a valid structured HTTP response with a given status code (A dictionary containing them is at the top of the file 
         this is declared in) and any extra data required.
         '''
         self.headers = {}
-        self.headers["Content-type"] = type
+        self.headers["Content-type"] = mimetype
         self.headers["Content-Length"] = len(data)
 
         self.responseLine = f"{protocol} {status} {httpCodes[status]}".encode()
@@ -83,7 +83,7 @@ class httpResponse:
         Construct the request and return it as a raw string.
         '''
         text = self.responseLine + b"\n"
-        for key in self.headers.keys():
+        for key in self.headers:
             text += f"{key}: {self.headers[key]}\n".encode()
         text += b'\n' + self.data
         return text

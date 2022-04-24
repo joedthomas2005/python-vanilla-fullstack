@@ -13,7 +13,7 @@ print("listening")
 server.listen(100)
 
 handler = requestHandler.requestHandler()
-handler.setDefault(handler.notfound)
+handler.setDefault(requestHandler.notfound)
 handler.addHandler("GET", "search", actions.search)
 handler.addHandler("GET", "posts", actions.readPost)
 handler.addHandler("POST", "posts", actions.new)

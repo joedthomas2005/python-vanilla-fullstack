@@ -4,7 +4,7 @@ window.addEventListener('load', load)
 function load() {
 
     document.getElementById("searchBar").addEventListener("keyup", (event) => {
-        if (event.key == "Enter") {
+        if (event.key === "Enter") {
             let query = document.getElementById("searchBar").value;
             console.log(`search query ${query}`);
             searchAPI(query, 10);
@@ -30,7 +30,7 @@ function searchAPI(search, count) {
 
     let results = [];
     request.onreadystatechange = function () {
-        if (request.readyState == 4) {
+        if (request.readyState === 4) {
             let data = request.responseText;
             console.log(data);
             results = JSON.parse(data);

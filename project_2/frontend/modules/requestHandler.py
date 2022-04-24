@@ -1,4 +1,5 @@
 import os.path
+from types import FunctionType
 import modules.httpFormatter as httpFormatter
 
 class requestHandler:
@@ -17,8 +18,8 @@ class requestHandler:
         self.default = self.loadfileunsafe
         self.siteDir = "./"
 
-    def setDefault(self, function: function) -> None:
-        self.default = function
+    def setDefault(self, defaultHandler: FunctionType) -> None:
+        self.default = defaultHandler
 
     def setCORSmethods(self, resource: str, *methods: str) -> None:
         self.CORSmethods[resource] = ','.join(methods).upper()
@@ -29,7 +30,7 @@ class requestHandler:
     def setSiteDir(self, directory: str) -> None:
         self.siteDir = f"{directory}/"
 
-    def addHandler(self, method: str, resource: str, handler: function) -> None:
+    def addHandler(self, method: str, resource: str, handler: FunctionType) -> None:
         '''
         Associate a request string with a function to call when that request is handled.
         The first parameter should be the request method (e.g. GET), the second should 
@@ -53,7 +54,7 @@ class requestHandler:
             if os.path.exists(self.siteDir + request.resource):
                 response = self.default(request.resource)
             else:
-                response = self.error(404)
+                response = error(404)
         
         elif request.method == "OPTIONS":
 
@@ -66,38 +67,28 @@ class requestHandler:
                     self.CORSheaders[request.resource])
             
             else:
-                response = self.error(500)
+                response = error(500)
 
         elif request.method == "POST":
-            response = self.error(405)
+            response = error(405)
         
         else:
-            response = self.error(400)
+            response = error(400)
 
         response.setHeader("Access-Control-Allow-Origin", "*")
         return response
-        
-    def error(self, status: int) -> httpFormatter.httpResponse:
-        return httpFormatter.httpResponse(status)
 
     def loadfilesafe(self, resource: str) -> httpFormatter.httpResponse:
 
         if ".." in resource or resource[0] == "/":
-            return self.error(403)
+            return error(403)
 
         path = self.siteDir + resource
 
         with open(path, 'rb') as file:
             data = file.read()
 
-        return httpFormatter.httpResponse(200, data, getMimeType(path))
-
-
-    def notfound(self, resource: str) -> httpFormatter.httpResponse:
-        return self.error(404)
-
-    def forbidden(self, resource: str) -> httpFormatter.httpResponse:
-        return self.error(403)
+        return httpFormatter.httpResponse(200, data, getMimeType(path))  
 
     def loadfileunsafe(self, resource: str) -> httpFormatter.httpResponse:
         
@@ -107,10 +98,19 @@ class requestHandler:
 
         return httpFormatter.httpResponse(200, data, getMimeType(path))
 
+def error(status: int) -> httpFormatter.httpResponse:
+    return httpFormatter.httpResponse(status)
+
+def notfound(resource: str) -> httpFormatter.httpResponse:
+        return error(404)
+
+def forbidden(resource: str) -> httpFormatter.httpResponse:
+        return error(403)
+
 def getMimeType(path: str) -> str:
 
     if path.split(".")[-1] == "js":
         return "text/javascript"
-    elif path.split(".")[-1] == "css":
+    if path.split(".")[-1] == "css":
         return "text/css"
     return "text/html"

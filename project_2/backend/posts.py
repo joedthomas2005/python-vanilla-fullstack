@@ -1,21 +1,7 @@
-#import mysql.connector
 import sqlite3
 import urllib.parse
 import os
-# credFile = open("sqlcreds.creds", "r")
-# fileData = credFile.readlines()
-# credFile.close()
-# user = fileData[0].strip("\n")
-# password = fileData[1].strip("\n")
 
-# db = mysql.connector.connect(
-#     host = "localhost",
-#     user = user,
-#     password = password,
-#     database = "blogapp"
-# )
-
-# cursor = db.cursor()
 SQLITEDB = 'blogapp.db'
 
 db = sqlite3.connect(SQLITEDB)
@@ -51,12 +37,13 @@ def readPostById(postID: int) -> str:
 
 def readPost(path: str) -> str:
     try:
-        post = open(path, "r")
+
+        with open(path, "r") as post:
+            data = post.read()
+        return data
+
     except:
         return ""
-    data = post.read()
-    post.close()
-    return data
 
 def getPostRecord(postID: int) -> tuple:
 

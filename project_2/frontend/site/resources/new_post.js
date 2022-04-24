@@ -3,7 +3,7 @@ let API = "http://127.0.0.1:3001"
 
 function load() {
     document.getElementById("bodybox").addEventListener("keyup", (event) => {
-        if(event.key == "Enter"){
+        if(event.key === "Enter"){
             submitPost();
         }
     });
@@ -24,8 +24,8 @@ function submitPost(){
     }))
 
     req.onreadystatechange = ()=>{
-        if(req.readyState == 4){
-            if(req.status == 201){
+        if(req.readyState === 4){
+            if(req.status === 201){
                 alert("Post Made!");
             }
             else{

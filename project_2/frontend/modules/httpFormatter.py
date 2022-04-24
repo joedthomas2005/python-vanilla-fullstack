@@ -83,7 +83,7 @@ class httpResponse:
         Construct the request and return it as a raw string.
         '''
         text = self.responseLine + b"\n"
-        for key in self.headers.keys():
+        for key in self.headers:
             text += f"{key}: {self.headers[key]}\n".encode()
         text += b'\n' + self.data
         return text

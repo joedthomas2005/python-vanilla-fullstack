@@ -1,4 +1,3 @@
-import http
 import json
 import posts
 import modules.httpFormatter as httpFormatter
@@ -15,13 +14,13 @@ def search(params: dict, body: str) -> httpFormatter.httpResponse:
         databaseEntries = posts.search(query, count)
 
         items = []
-        for i in range(len(databaseEntries)):
+        for (i, entry) in enumerate(databaseEntries):
             items.append({
                 "number": i,
                 "query": query,
-                "id": databaseEntries[i][0],
-                "title": databaseEntries[i][1],
-                "body": posts.readPost(databaseEntries[i][2])
+                "id": entry[0],
+                "title": entry[1],
+                "body": posts.readPost(entry[2])
             })
         
         return httpFormatter.httpResponse(200,  json.dumps(items).encode())
