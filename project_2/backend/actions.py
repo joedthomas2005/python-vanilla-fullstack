@@ -27,7 +27,7 @@ def search(params: dict, _: str) -> httpFormatter.httpResponse:
     except (KeyError, ValueError):
         return httpFormatter.httpResponse(400)
 
-    except Exception as e:
+    except Exception as e: # skipcq
         print("Unhandled exception occured: ", e)
         return httpFormatter.httpResponse(500)
 
@@ -54,15 +54,14 @@ def new(_: dict, body: str) -> httpFormatter.httpResponse:
 
     try:
         postJSON = json.loads(body)
-    except json.decoder.JSONDecodeError as e:
+    except json.decoder.JSONDecodeError:
         print("INVALID JSON")
         return httpFormatter.httpResponse(400)
     
     try:
         title = postJSON["postTitle"]
         postBody = postJSON["postBody"]
-    except KeyError as e:
-        print("Key Error")
+    except KeyError:
         return httpFormatter.httpResponse(400)
 
     try:    
@@ -77,12 +76,12 @@ def delete(params: dict, _: str) -> httpFormatter.httpResponse:
     
     try:
         postID = params["id"]
-    except KeyError as e:
+    except KeyError:
         return httpFormatter.httpResponse(400)
     
     try:
         successful = posts.deletePost(postID)
-    except Exception as e:
+    except Exception as e: # skipcq
         print("Unhandled Exception Occured: " + e)
         return httpFormatter.httpResponse(500)
     
