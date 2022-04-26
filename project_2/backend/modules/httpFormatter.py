@@ -45,8 +45,7 @@ class httpRequest:
             self.body += "".join(lines[headerCount: ])
 
         except Exception as e: # skipcq
-            
-            print(e)
+            print(f"Malformed Request: {e}")
             self.method = "NULL"
             self.resource = data
             self.paramLine = "NULL"
@@ -67,6 +66,9 @@ class httpResponse:
         (A dictionary containing them is at the top of the file 
         this is declared in) and any extra data required.
         '''
+        self.status = status
+        self.protocol = protocol
+        self.mimetype = mimetype
         self.headers = {}
         self.headers["Content-type"] = mimetype
         self.headers["Content-Length"] = len(data)

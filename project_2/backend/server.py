@@ -12,14 +12,20 @@ server.bind(('', 3001))
 print("listening")
 server.listen(100)
 
+#Should make a better way of adding handlers than this horrible block
+
 handler = requestHandler.requestHandler()
-handler.setDefault(requestHandler.notfound)
+handler.setSiteDir("site")
+handler.setDefault(handler.loadfilesafe)
+handler.addHandler("GET", "error.html", lambda x,y: handler.forbidden())
+handler.addHandler("GET", "", lambda x,y: handler.loadfilesafe("index.html"))
 handler.addHandler("GET", "search", actions.search)
 handler.addHandler("GET", "posts", actions.readPost)
 handler.addHandler("POST", "posts", actions.new)
 handler.addHandler("DELETE", "posts", actions.delete)
 handler.setCORSmethods("posts", "GET", "POST", "DELETE")
 handler.setCORSheaders("posts", "Content-Type")
+handler.setCORSmethods("search", "GET")
 
 while True:
 

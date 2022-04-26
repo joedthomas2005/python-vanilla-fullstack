@@ -54,7 +54,7 @@ class requestHandler:
             if os.path.exists(self.siteDir + request.resource):
                 response = self.default(request.resource)
             else:
-                response = error(404)
+                response = self.error(404)
         
         elif request.method == "OPTIONS":
             if request.resource in self.CORSmethods:
@@ -65,13 +65,13 @@ class requestHandler:
                     response.setHeader("Access-Control-Allow-Headers", 
                     self.CORSheaders[request.resource])
             else:
-                response = error(500)
+                response = self.error(500)
 
         elif request.method == "POST":
-            response = error(405)
+            response = self.error(405)
         
         else:
-            response = error(400)
+            response = self.error(400)
 
         response.setHeader("Access-Control-Allow-Origin", "*")
         return response
@@ -79,7 +79,7 @@ class requestHandler:
     def loadfilesafe(self, resource: str) -> httpFormatter.httpResponse:
 
         if ".." in resource or resource[0] == "/":
-            return error(403)
+            return self.error(403)
 
         path = self.siteDir + resource
 
@@ -96,14 +96,22 @@ class requestHandler:
 
         return httpFormatter.httpResponse(200, data, getMimeType(path))
 
-def error(status: int) -> httpFormatter.httpResponse:
-    return httpFormatter.httpResponse(status)
+    def error(self, status: int) -> httpFormatter.httpResponse:
+        html = b""
+        if(os.path.exists(f"{self.siteDir}error.html")):
+            with open(f"{self.siteDir}error.html", "r") as file:
+                html = file.read()
+            print(html)
+            print(html.format(str(status), httpFormatter.httpCodes[status]))
+            html = html.format(str(status), httpFormatter.httpCodes[status])
+            html = html.encode()
+        return httpFormatter.httpResponse(status, html)
 
-def notfound(_: str) -> httpFormatter.httpResponse:
-        return error(404)
+    def notfound(self, _: str = '') -> httpFormatter.httpResponse:
+        return self.error(404)
 
-def forbidden(_: str) -> httpFormatter.httpResponse:
-        return error(403)
+    def forbidden(self, _: str = '') -> httpFormatter.httpResponse:
+        return self.error(403)
 
 def getMimeType(path: str) -> str:
 

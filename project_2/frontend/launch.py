@@ -15,6 +15,7 @@ handler.setDefault(handler.loadfilesafe)
 handler.setSiteDir("site")
 
 handler.addHandler("GET", "", lambda x, y: handler.loadfilesafe("index.html"))
+handler.addHandler("GET", "error.html", lambda x, y: handler.forbidden())
 
 while True:
     
@@ -27,6 +28,6 @@ while True:
         c.send(res.build())
 
     except Exception as e: # skipcq
-        print(f"\033[91m{e}\033[0m")
+        print(f"\033[91mUnhandled Exception: {e}\033[0m")
         c.send(httpFormatter.httpResponse(500).build())
     c.close()

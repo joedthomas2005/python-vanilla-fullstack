@@ -1,0 +1,15 @@
+body{
+    text-align: center;
+    background-color: beige;
+}
+#status {
+    font-size: 48pt;
+    color: red;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+}
+
+#description {
+    font-size: 32pt;
+    color: crimson;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}

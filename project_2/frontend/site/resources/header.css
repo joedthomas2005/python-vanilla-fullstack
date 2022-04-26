@@ -1,3 +1,8 @@
+body {
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
 #header * {
     margin-top: 0px;
 }

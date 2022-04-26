@@ -45,7 +45,7 @@ class httpRequest:
             self.body += "".join(lines[headerCount: ])
 
         except Exception as e: # skipcq
-            print("Malformed Request: " + e)
+            print(f"Malformed Request: {e}")
             self.method = "NULL"
             self.resource = data
             self.paramLine = "NULL"
