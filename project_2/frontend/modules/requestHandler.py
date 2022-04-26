@@ -49,6 +49,8 @@ class requestHandler:
         
         if requestString in self.requests:
             response = self.requests[requestString](request.params, request.body)
+            if(response.status != 200):
+                response =  self.error(response.status)
 
         elif request.method == "GET":
             if os.path.exists(self.siteDir + request.resource):
